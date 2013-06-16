@@ -4,6 +4,8 @@
 	</p>
 <% end %>
 
+<%= pluralize session[:counter], 'time' %>
+
 <h1>Your Pragmatic Catalog</h1>
 <% @products.each do |product| %> 
 	<div class="entry">
@@ -11,7 +13,9 @@
 		<h3>
 			<%= product.title %>
 		</h3>
-		<%= sanitize(product.description) %> 
+			<p>
+				<%= sanitize(product.description) %>
+			</p>
 		<div class="price_line">
 			<span class="price">
 				<%= number_to_currency(product.price) %>
