@@ -40,12 +40,14 @@ class LineItemsController < ApplicationController
   # POST /line_items
   # POST /line_items.json
   def create
+    @cart = current_cart
     product = Product.find(params[:product_id])
-    @line_item = current_cart.add_product(product.id)
+    @line_item = @cart.add_product(product.id, product.price)
 
     respond_to do |format|
       if @line_item.save
-        format.html { redirect_to @line_item.cart, notice: 'Line item was successfully created.' }
+        format.html { redirect_to store_url}
+        format.js { @current_item = @line_item }
         format.json { render json: @line_item, status: :created, location: @line_item }
       else
         format.html { render action: "new" }
@@ -54,6 +56,42 @@ class LineItemsController < ApplicationController
     end
   end
 
+  # PUT /line_items/1
+  # PUT /line_items/1.json  
+  def decrease
+    @cart = current_cart
+    @line_item = @cart.decrease(params[:id])
+    
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to store_path, notice: 'Line item was successfully updated.'}
+        format.js { @current_item = @line_item }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit"}
+        format.json { render json: @line_item.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /line_items/1
+  # PUT /line_items/1.json  
+  def increase
+    @cart = current_cart
+    @line_item = @cart.increase(params[:id])
+    
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to store_path, notice: 'Line item was successfully updated.'}
+        format.js { @current_item = @line_item }
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @line_item.errors, status: :unprocessable_entity }
+      end
+    end    
+  end
+  
   # PUT /line_items/1
   # PUT /line_items/1.json
   def update
@@ -77,7 +115,11 @@ class LineItemsController < ApplicationController
     @line_item.destroy
 
     respond_to do |format|
-      format.html { redirect_to line_items_url }
+      if LineItem.find_by_cart_id(@line_item.cart_id).nil? 
+        format.html { redirect_to store_url }
+      else
+        format.html { redirect_to current_cart, notice: 'Line item removed' }
+      end
       format.json { head :no_content }
     end
   end

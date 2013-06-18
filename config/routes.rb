@@ -1,5 +1,11 @@
 Depot::Application.routes.draw do
-  resources :line_items
+  resources :orders
+
+
+  resources :line_items do
+    put 'decrease', on: :member
+    put 'increase', on: :member
+  end
 
 
   resources :carts

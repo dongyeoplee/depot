@@ -63,4 +63,10 @@ class ProductTest < ActiveSupport::TestCase
     product.title = "abcdefghijklm"
     assert product.valid?
   end
+  
+  test "image_url uniqueness" do
+    product = Product.new(title: "hello world ruby on rails", description: "xyz", price: 44.44, image_url: products(:ruby).image_url)
+    assert !product.save
+    assert_equal "has already been taken", product.errors[:image_url].join('; ')
+  end
 end

@@ -8,12 +8,19 @@
 	</head>
 	<body class="<%= controller.controller_name %>">
 		<div id="banner">
-			<%= image_tag("logo.png") %>
+			<%= link_to image_tag("logo.png"), store_path %>
 			<%= @page_title || "Pragmatic Bookshelf" %>
 		</div>
 
 		<div id="columns">
 			<div id="side">
+				<% if @cart %>
+					<div id="cart">
+						<% unless @cart.line_items.empty? %>
+							<%= render @cart %>
+						<% end %>
+					</div>
+				<% end %>	
 				<ul>
 					<li><a href="#">Home</a></li>
 					<li><a href="#">Questions</a></li>
